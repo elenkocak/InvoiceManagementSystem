@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="6.5.0" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" Version="6.0.1" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InvoiceManagementSystem.Core\InvoiceManagementSystem.Core.csproj" />
+    <ProjectReference Include="..\InvoiceManagementSystem.DAL\InvoiceManagementSystem.DAL.csproj" />
+    <ProjectReference Include="..\InvoiceManagementSystem.Entity\InvoiceManagementSystem.Entity.csproj" />
+  </ItemGroup>
+
+</Project>
