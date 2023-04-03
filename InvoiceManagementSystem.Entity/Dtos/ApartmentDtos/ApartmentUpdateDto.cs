@@ -10,13 +10,13 @@ namespace InvoiceManagementSystem.Entity.Dtos.ApartmentDtos
     public class ApartmentUpdateDto : IDto
     {
         public int Id { get; set; }
-        public string WhichBlock { get; set; }
-        public bool ApartmentState { get; set; }
-        public int ApartmentNo { get; set; }
-        public int FloorNumber { get; set; }
-        public bool IsOwner { get; set; }
-        public string ApartmentSize { get; set; }
-        public bool Status { get; set; }
+        public string? WhichBlock { get; set; }
+        public bool? ApartmentState { get; set; }
+        public int? ApartmentNo { get; set; }
+        public int? FloorNumber { get; set; }
+        public string? ApartmentSize { get; set; }
+        public bool? Status { get; set; }
+        public int? ApartmentNumber { get; set; }
     }
     
     

@@ -5,6 +5,7 @@ using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.Entity.Concrete;
 using InvoiceManagementSystem.Entity.Dtos;
 using InvoiceManagementSystem.Entity.Dtos.ApartmentDtos;
+using InvoiceManagementSystem.Entity.Dtos.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -81,7 +82,12 @@ namespace InvoiceManagementSystem.BLL.Concrete
             try
             {
                 var apartment = _apartmentDal.Get(x => x.Id == id);
-                var apartmentDto=new ApartmentListDto()
+
+                if (apartment==null || id==null)
+                {
+                    return new ErrorDataResult<ApartmentListDto>(null, "Data not found", Messages.data_not_found);
+                }
+                var apartmentDto = new ApartmentListDto()
                 {
                     WhichBlock = apartment.WhichBlock,
                     ApartmentNo = apartment.Id,
@@ -89,9 +95,8 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     ApartmentSize = apartment.ApartmentSize,
                     ApartmentState = apartment.ApartmentState,
                     Status = apartment.Status,
-                  
+
                 };
-                
                 return new SuccessDataResult<ApartmentListDto>(apartmentDto, "Ok", Messages.success);
             }
             catch (Exception e)
@@ -113,6 +118,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     apartmentsDto.Add(new ApartmentListDto
                     {
+                        Id = apartment.Id,
                         WhichBlock = apartment.WhichBlock,
                         ApartmentNo = apartment.ApartmentNo,
                         FloorNumber = apartment.FloorNumber,
@@ -132,21 +138,60 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
-        public IDataResult<bool> Update(ApartmentUpdateDto apartmentUpdateDto)
+       
+
+        public IDataResult<ApartmentUpdateDto> Update(ApartmentUpdateDto apartmentUpdateDto)
         {
             try
             {
-                if (apartmentUpdateDto != null)
+                var result = _apartmentDal.Get(x => x.Id == apartmentUpdateDto.Id);
+                var returnDto = new ApartmentUpdateDto(); //amacım geri dönüşte null olmayan propertylerin kullanıcııya gösterilmesi fakat işe yaramadı
+
+                
+                returnDto.Id=apartmentUpdateDto.Id;
+                if (result != null)
                 {
-                    var apartment = _apartmentDal.Get(x => x.Id == apartmentUpdateDto.Id);
+                    if (apartmentUpdateDto==null)
+                    {
+                        return new ErrorDataResult<ApartmentUpdateDto>(null, "Güncelleme işlemi yapılamadı", Messages.err_null);
+                    }
+                    if (apartmentUpdateDto.WhichBlock != null)
+                    {
+                        result.WhichBlock = apartmentUpdateDto.WhichBlock;
+                    }
+                    if (apartmentUpdateDto.Status != null)
+                    {
+                        result.Status= apartmentUpdateDto.Status.Value;
+                    }
+                    if (apartmentUpdateDto.ApartmentState != null)
+                    {
+                        result.ApartmentState = apartmentUpdateDto.ApartmentState.Value;
+                    }
+                    if (apartmentUpdateDto.ApartmentSize != null)
+                    {
+                        result.ApartmentState = apartmentUpdateDto.ApartmentState.Value;
+                    }
+                    if (apartmentUpdateDto.ApartmentNo != null)
+                    {
+                        result.ApartmentNo = apartmentUpdateDto.ApartmentNo.Value;
+                    }
+                    if (apartmentUpdateDto.FloorNumber != null)
+                    {
+                        result.FloorNumber = apartmentUpdateDto.FloorNumber.Value;
+                    }
+                    {
+
+                    }
+                    _apartmentDal.Update(result);
+                    return new SuccessDataResult<ApartmentUpdateDto>(apartmentUpdateDto , "Daire bilgileri güncellendi", Messages.success);
 
                 }
-                return new ErrorDataResult<bool>(false, "Err", Messages.err_null);
+                return new ErrorDataResult<ApartmentUpdateDto>(null, "Err", Messages.err_null);
             }
             catch (Exception e)
             {
 
-                throw;
+                return new ErrorDataResult<ApartmentUpdateDto>(null, e.Message, Messages.unknown_err);
             }
         }
     }

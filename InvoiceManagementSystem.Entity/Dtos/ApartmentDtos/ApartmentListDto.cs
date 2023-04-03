@@ -10,11 +10,11 @@ namespace InvoiceManagementSystem.Entity.Dtos
     public class ApartmentListDto:IDto
     {
         public int Id { get; set; }
-        public string WhichBlock { get; set; }
-        public bool ApartmentState { get; set; }
-        public int ApartmentNo { get; set; }
-        public int FloorNumber { get; set; }
-        public string ApartmentSize { get; set; }
-        public bool Status { get; set; }
+        public string? WhichBlock { get; set; }
+        public bool? ApartmentState { get; set; }
+        public int? ApartmentNo { get; set; }
+        public int? FloorNumber { get; set; }
+        public string? ApartmentSize { get; set; }
+        public bool? Status { get; set; }
     }
 }

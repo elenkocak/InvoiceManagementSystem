@@ -12,7 +12,7 @@ namespace InvoiceManagementSystem.BLL.Abstract
     public interface IApartmentService
     {
         IDataResult<object> Add(AddMultipleApartmentDto addMultipleApartmentDto);
-        IDataResult<bool> Update(ApartmentUpdateDto apartmentUpdateDto);
+        IDataResult<ApartmentUpdateDto> Update(ApartmentUpdateDto apartmentUpdateDto);
         IDataResult<bool> Delete(int id);
         IDataResult<List<ApartmentListDto>> GetList();
         IDataResult<ApartmentListDto> GetById(int id);

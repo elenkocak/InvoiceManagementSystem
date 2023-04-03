@@ -16,7 +16,7 @@ namespace InvoiceManagementSystem.Entity.Dtos.UserDtos
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public bool HaveaCar { get; set; }
-        public bool Status { get; set; }
+        //public bool Status { get; set; }
 
     }
 }

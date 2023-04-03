@@ -20,38 +20,38 @@ namespace InvoiceManagmentSystem.Controllers
             _apartmentService = apartmentService;
         }
 
-        //[HttpPost("addapartment")]
-        //public IActionResult Add(ApartmentAddDto apartmentAddDto)
-        //{
-        //    var result = _apartmentService.Add(apartmentAddDto);
-        //    return Ok(result);
-        //}
+        [HttpPost("addapartment")]
+        public IActionResult Add(AddMultipleApartmentDto dto)
+        {
+            var result = _apartmentService.Add(dto);
+            return Ok(result);
+        }
 
-        //[HttpPost("deleteapartment")]
-        //public IActionResult Delete(int id)
-        //{
-        //    var result = _apartmentService.Delete(id);
-        //    return Ok(result);
-        //}
+        [HttpPost("deleteapartment")]
+        public IActionResult Delete(int id)
+        {
+            var result = _apartmentService.Delete(id);
+            return Ok(result);
+        }
 
-        //[HttpPost("updateapartment")]
-        //public IActionResult Update(ApartmentUpdateDto apartmentUpdate)
-        //{
-        //    var result = _apartmentService.Update(apartmentUpdate);
-        //    return Ok(result);
-        //}
-        //[HttpGet("getbyid")]
-        //public IActionResult GetById(int id)
-        //{
-        //    var result = _apartmentService.GetById(id);
-        //    return Ok(result);
-        //}
+        [HttpPost("updateapartment")]
+        public IActionResult Update(ApartmentUpdateDto apartmentUpdate)
+        {
+            var result = _apartmentService.Update(apartmentUpdate);
+            return Ok(result);
+        }
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int id)
+        {
+            var result = _apartmentService.GetById(id);
+            return Ok(result);
+        }
 
-        //[HttpGet("getlist")]
-        //public IActionResult GetList()
-        //{
-        //    var result = _apartmentService.GetList();
-        //    return Ok(result);
-        //}
+        [HttpGet("getlist")]
+        public IActionResult GetList()
+        {
+            var result = _apartmentService.GetList();
+            return Ok(result);
+        }
     }
 }

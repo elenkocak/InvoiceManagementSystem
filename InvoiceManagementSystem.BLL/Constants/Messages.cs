@@ -20,5 +20,6 @@ namespace InvoiceManagementSystem.BLL.Constants
         public static string update_operation_fail = "update_operation_fail";
 
         public static string status_updated_already_paid = "status updated to already paid";
+        public static string data_is_required = " data is required"; //girilen parametre null geldi fakat girilmesi zorunlu alan
     }
 }

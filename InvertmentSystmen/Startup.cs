@@ -1,3 +1,4 @@
+using InvoiceManagementSystem.BLL.Concrete;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,6 +32,7 @@ namespace InvertmentSystmen
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvertmentSystmen", Version = "v1" });
+                //c.SchemaFilter<RemoveNullablePropertiesFilter>();
             });
         }
 
