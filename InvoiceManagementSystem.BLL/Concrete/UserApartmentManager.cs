@@ -23,6 +23,8 @@ namespace InvoiceManagementSystem.BLL.Concrete
             _ApartmentService = apartmentService;
         }
 
+       
+        
 
     }
 }

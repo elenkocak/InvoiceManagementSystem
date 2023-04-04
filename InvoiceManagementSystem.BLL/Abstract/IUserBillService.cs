@@ -5,6 +5,7 @@ using InvoiceManagementSystem.Entity.Dtos.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,5 +22,6 @@ namespace InvoiceManagementSystem.BLL.Abstract
         IDataResult<List<UserBillListDto>> GetActiveBills();
         IDataResult<List<UserBillListDto>> GetPassiveBills();
         IDataResult<UserBillListDto> GetById(int id);
+        IDataResult<UserBill> Get(Expression<Func<UserBill, bool>> filter);
     }
 }

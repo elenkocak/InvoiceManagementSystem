@@ -20,6 +20,7 @@ namespace InvoiceManagementSystem.DAL.Concrete.Context
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Car> Cars { get; set; }
+        public DbSet<BillType> BillTypes { get; set; }
         //public DbSet<UserRole> UserRoles { get; set; }
     }
 }

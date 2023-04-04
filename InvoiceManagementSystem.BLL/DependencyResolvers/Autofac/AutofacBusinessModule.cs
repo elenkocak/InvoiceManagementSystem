@@ -33,6 +33,7 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<UserBillManager>().As<IUserBillService>();
             builder.RegisterType<EfUserBillDal>().As<IUserBillDal>();
 
+            builder.RegisterType<EfBillTypesDal>().As<IBillTypesDal>();
           
         }
     }

@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,11 +22,13 @@ namespace InvoiceManagementSystem.BLL.Concrete
         private readonly IUserBillDal _userBillDal;
         private readonly IUserService _userService;
         private readonly IBillService _billService;
-        public UserBillManager(IUserBillDal userBill, IUserService userService, IBillService billService)
+        private readonly IBillTypesDal _billTypesDal;
+        public UserBillManager(IUserBillDal userBill, IUserService userService, IBillService billService, IBillTypesDal billTypesDal)
         {
             _userBillDal = userBill;
             _userService = userService;
             _billService = billService;
+            _billTypesDal = billTypesDal;
         }
 
         public IDataResult<UserBillAddDto> Add(UserBillAddDto userBillAdd)
@@ -57,9 +60,14 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 return new ErrorDataResult<UserBillMultipleAddDto>(null, "Alanlar boş geçilemez", Messages.err_null);
             }
             var userBill = new List<UserBill>();
-
+            //var userIds = userBillMultipleAdd.UserBillsAddDtos.Select(x => x.UserId).ToArray();  //MANTIKSIZCA BİR ŞEY YAPTIM ÇÜNKÜ ZATEN BİR KULLANICININ BİRDEN FAZLA SU FATURASI OLABİLİR.
+            //var userIdControl = _userBillDal.GetList(x => userBillMultipleAdd.UserBillsAddDtos.Select(y => y.UserId).Contains(x.UserId));
             foreach (var item in userBillMultipleAdd.UserBillsAddDtos)
             {
+                //if (userIdControl.Any(x => x.UserId == item.UserId))
+                //{
+                //    return new ErrorDataResult<UserBillMultipleAddDto>(null, "Belirtilen kullanıcıya ait fatura zaten var", Messages.user_already_has_an_invoice);
+                //}
                 _userBillDal.Add(new UserBill
                 {
                     BillId= item.BillId,
@@ -68,7 +76,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 });
             }
             var count = userBillMultipleAdd.UserBillsAddDtos.Count();
-            return new SuccessDataResult<UserBillMultipleAddDto>(userBill, $"{count} tane kayıt başarıyla eklendi", Messages.success);
+            return new SuccessDataResult<UserBillMultipleAddDto>(userBillMultipleAdd, $"{count} tane kayıt başarıyla eklendi", Messages.success);
         }
 
         public IDataResult<UserBill> Delete(int id)
@@ -112,22 +120,44 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
+        public IDataResult<UserBill> Get(Expression<Func<UserBill, bool>> filter)
+        {
+            try
+            {
+                var userBill = _userBillDal.Get(filter);
+                if (userBill==null)
+                {
+                    return new ErrorDataResult<UserBill>(null, "User's Bill Not Found", Messages.data_not_found);
+                }
+                return new SuccessDataResult<UserBill>(userBill, "Ok", Messages.success);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
         public IDataResult<List<UserBillListDto>> GetActiveBills() //ÖDENMEMİŞ FATURALAR
         {
             try
             {
+                
                 var usersBills = _userBillDal.GetList().Where(x=>x.Status==true);
                 var userBillDto = new List<UserBillListDto>();
 
                 foreach (var userBill in usersBills)
                 {
+                    var billName = _billTypesDal.Get(x => x.Id == userBill.BillId).BillName; 
+                    var userName = _userService.GetById(userBill.UserId).Data; 
+
                     userBillDto.Add(new UserBillListDto
-                    {
+                    { 
                         Id = userBill.Id,
-                        BillId = userBill.BillId,
+                        BillName = billName, 
                         Status = userBill.Status,
-                        UserId = userBill.UserId,
-                    });
+                        UserDetails = userName.Name +" "+ userName.Surname +"  "+ userName.PhoneNumber,
+                    }); 
 
                 }
                 return new SuccessDataResult<List<UserBillListDto>>(userBillDto, "Ok", Messages.success);
@@ -144,16 +174,21 @@ namespace InvoiceManagementSystem.BLL.Concrete
             try
             {
                 var result = _userBillDal.Get(x => x.Id == id);
+                var userid = result.UserId;
+                var billid = result.BillId;
+                
+                var getUserDetails = _userService.GetById(userid).Data;
+                var getBillName = _billTypesDal.Get(X => X.Id == billid).BillName;
                 if (result == null)
                 {
                     return new ErrorDataResult<UserBillListDto>(null, "Data is not found", Messages.data_not_found);
                 }
                 var userBillDto = new UserBillListDto()
                 {
-                    BillId = result.BillId,
+                    BillName = getBillName,
                     Status = result.Status,
                     Id = result.Id,
-                    UserId = result.UserId,
+                    UserDetails =getUserDetails.Name + " " + getUserDetails.Surname + "  " + getUserDetails.PhoneNumber
                 };
                 return new SuccessDataResult<UserBillListDto>(userBillDto, "OK", Messages.success);
             }
@@ -173,13 +208,16 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
                 foreach (var userBill in userBills)
                 {
+                    var getUserName=_userService.GetById(userBill.BillId).Data;
+                    var getBillName = _billTypesDal.Get(x => x.Id == userBill.BillId).BillName;
+
                     userBillDto.Add(new UserBillListDto
                     {
                         Id = userBill.Id,
-                        BillId = userBill.BillId,
-                        UserId = userBill.UserId,
+                        BillName = getBillName,
+                        UserDetails =getUserName.Name +" "+ getUserName.Surname+ "   "+getUserName.PhoneNumber,
                         Status = userBill.Status
-                    });
+                    });;
                 }
                 return new SuccessDataResult<List<UserBillListDto>>(userBillDto, "OK", Messages.success);
             }
@@ -199,13 +237,14 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
                 foreach (var userBill in userBills)
                 {
-
+                    var billName = _billTypesDal.Get(x => x.Id == userBill.BillId).BillName;
+                    var userDetails = _userService.GetById(userBill.UserId).Data;
                     userBillDto.Add(new UserBillListDto
                     {
                         Id = userBill.Id,
-                        BillId = userBill.BillId,
+                        BillName = billName,
                         Status = userBill.Status,
-                        UserId = userBill.UserId
+                        UserDetails = userDetails.Name + " "+ userDetails.Surname + "  " + userDetails.PhoneNumber
                     });
 
                 }

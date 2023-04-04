@@ -10,8 +10,10 @@ namespace InvoiceManagementSystem.Entity.Dtos.UserBillDtos
     public class UserBillListDto:IDto
     {
         public int Id { get; set; }
-        public int UserId { get; set; }
-        public int BillId { get; set; }
+        //public int UserId { get; set; }
+        //public int BillId { get; set; }
+        public string UserDetails { get; set; }
+        public string BillName { get; set; }
         public bool Status { get; set; }
 
     }

@@ -19,6 +19,6 @@ namespace InvoiceManagementSystem.BLL.Abstract
         IDataResult<UserListDto> GetById(int id);
         IDataResult<User> Delete(int id);
         IDataResult<User> MakePassiveUser(int id);
-       
+        IDataResult<User> Get(Expression<Func<User, bool>> filter);
     }
 }

@@ -79,6 +79,25 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
+        public IDataResult<User> Get(Expression<Func<User, bool>> filter)
+        {
+            try
+            {
+                var user = _userDal.Get(filter);
+                if (user==null)
+                {
+                    return new ErrorDataResult<User>(null, "User not found", Messages.success);
+                }
+                return new SuccessDataResult<User>(user, "Ok", Messages.success);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<User>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
         public IDataResult<UserListDto> GetById(int id)
         {
             try

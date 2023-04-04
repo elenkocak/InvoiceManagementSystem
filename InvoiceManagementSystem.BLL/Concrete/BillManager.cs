@@ -8,6 +8,7 @@ using InvoiceManagementSystem.Entity.Dtos.BillDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -200,6 +201,25 @@ namespace InvoiceManagementSystem.BLL.Concrete
             {
 
                 return new ErrorDataResult<bool>(false,e.Message, Messages.unknown_err);
+
+            }
+        }
+
+        public IDataResult<Bill> Get(Expression<Func<Bill, bool>> filter)
+        {
+            try
+            {
+                var bill = _billDal.Get(filter);
+                if (bill==null)
+                {
+                    return new ErrorDataResult<Bill>(null, "Bill not found", Messages.data_not_found);
+                }
+                return new SuccessDataResult<Bill>(bill, "Ok", Messages.success);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<Bill>(null, e.Message, Messages.unknown_err);
 
             }
         }

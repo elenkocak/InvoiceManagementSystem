@@ -65,7 +65,7 @@ namespace InvoiceManagmentSystem.Controllers
             var result = _userBillService.Update(userBillUpdateDto);
             return Ok(result);
         }
-        [HttpPost("deketebypassive")]
+        [HttpPost("deletebypassive")]
         public IActionResult DeleteByPassive(int id)
         {
             var result = _userBillService.DeletebyPassive(id);
