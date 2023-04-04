@@ -21,6 +21,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
             _userApartmentDal = userApartmentDal;
             _userService = userService;
             _ApartmentService = apartmentService;
+
         }
 
        
