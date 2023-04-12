@@ -161,6 +161,45 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
+        public IDataResult<User> GetUserByMail(string email)
+        {
+            try
+            {
+                var result = _userDal.Get(x => x.Email == email);
+                if (result != null)
+                {
+                    return new SuccessDataResult<User>(result, "Ok", Messages.success);
+
+                }
+                return new ErrorDataResult<User>(null, "User not found", Messages.user_not_found);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<User>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
+        public IDataResult<User> GetUserByPhone(string phoneNumber)
+        {
+            try
+            {
+                var result = _userDal.Get(x => x.PhoneNumber.Trim().Replace(" ", "") == phoneNumber.Trim().Replace(" ", ""));
+                if (result != null)
+                {
+                    return new SuccessDataResult<User>(result, "Ok", Messages.success);
+                }
+                return new ErrorDataResult<User>(null, "User not found", Messages.user_not_found);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<User>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
         public IDataResult<User> MakePassiveUser(int id)
         {
             try

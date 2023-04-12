@@ -24,5 +24,10 @@ namespace InvoiceManagementSystem.BLL.Constants
 
         public static string user_already_has_an_invoice = "user_already_has_in_invoice"; // işlem başarılı
 
+        #region Auth Messages
+        public static string already_mail_registered = "err_mail_already_registered";
+        public static string user_not_found = "err_user_not_found";
+        public static string already_phone_number_exists = "err_phone_number_already_exists";
+        #endregion
     }
 }
