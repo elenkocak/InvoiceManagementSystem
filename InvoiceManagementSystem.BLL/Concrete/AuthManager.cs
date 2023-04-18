@@ -115,7 +115,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
                 if (!phoneUtil.IsValidNumber(phoneNumber))
                 {
-                    return new ErrorDataResult<bool>(false, "Invalid PhoneNumber", Messages.)
+                    return new ErrorDataResult<bool>(false, "Invalid PhoneNumber", Messages.invalid_phone_number);
                 }
                 byte[] passworsalt, passwordhash;
                 var createPasswordBySystem = RandomString(6);
