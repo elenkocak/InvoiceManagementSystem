@@ -15,12 +15,11 @@ namespace InvoiceManagementSystem.Core.Entities.Concrete
         public string? TcNo { get; set; }
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
-        public bool? HaveaCar { get; set; }
         public bool? Status { get; set; }
 
         public byte[]? PasswordSalt { get; set; }
         public byte[]? PasswordHash { get; set; }
-
+        public string SecurityCode { get; set; }
         public DateTime? RegistrationDate { get; set; }
 
     }

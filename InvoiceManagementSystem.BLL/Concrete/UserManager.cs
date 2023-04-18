@@ -278,5 +278,23 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 return new ErrorDataResult<UserUpdateDto>(null, e.Message, Messages.unknown_err);
             }
         }
+
+        public IDataResult<bool> UpdateBasic(User user)
+        {
+            try
+            {
+                if (user != null)
+                {
+                    _userDal.Update(user);
+                    return new SuccessDataResult<bool>(true, "Ok", Messages.success);
+                }
+                return new ErrorDataResult<bool>(true, null, Messages.update_operation_fail);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<bool>(false, e.Message, Messages.unknown_err);
+            }
+        }
     }
 }

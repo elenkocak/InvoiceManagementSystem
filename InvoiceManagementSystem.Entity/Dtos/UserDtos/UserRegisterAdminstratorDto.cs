@@ -15,5 +15,7 @@ namespace InvoiceManagementSystem.Entity.Dtos.UserDtos
         public string Email { get; set; }
         public string PhoneNumber { get; set; }
         public string? IdentityNo { get; set; }
+        public string? TcNo { get; set; }
+
     }
 }

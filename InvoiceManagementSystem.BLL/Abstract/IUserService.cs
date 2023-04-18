@@ -15,6 +15,7 @@ namespace InvoiceManagementSystem.BLL.Abstract
     {
         IDataResult<UserAddMultipleDto> Add(UserAddMultipleDto userAddDto);
         IDataResult<UserUpdateDto> Update(UserUpdateDto userUpdateDto);
+        IDataResult<bool> UpdateBasic(User user);
         IDataResult<List<UserListDto>> GetList();
         IDataResult<UserListDto> GetById(int id);
         IDataResult<User> Delete(int id);
