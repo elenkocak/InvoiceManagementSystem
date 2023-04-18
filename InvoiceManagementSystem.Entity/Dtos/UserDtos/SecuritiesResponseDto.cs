@@ -5,19 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace InvoiceManagementSystem.Entity.Dtos
+namespace InvoiceManagementSystem.Entity.Dtos.UserDtos
 {
     public class SecuritiesResponseDto:IDto
     {
         public string Token { get; set; }
-        public int UserId { get; set; }
-
-    }
-
-    public class SecuritySystem
-    {
-        public string SecurityType { get;   set; }
         public string SecurityCode { get; set; }
-        public int Status { get; set; }
+        public string Email { get; set; }
+
     }
 }

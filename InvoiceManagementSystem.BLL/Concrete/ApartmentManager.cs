@@ -1,5 +1,6 @@
 ﻿using InvoiceManagementSystem.BLL.Abstract;
 using InvoiceManagementSystem.BLL.Constants;
+using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.Entity.Concrete;
@@ -77,6 +78,25 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
+        public IDataResult<Apartment> Get(Expression<Func<Apartment, bool>> filter)
+        {
+            try
+            {
+                var getApartment = _apartmentDal.Get(filter);
+                if (getApartment ==null)
+                {
+                    return new ErrorDataResult<Apartment>(null, "apartment not found", Messages.data_not_found);
+                }
+                return new SuccessDataResult<Apartment>(getApartment, "OK", Messages.success);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<Apartment>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
         public IDataResult<ApartmentListDto> GetById(int id)
         {
             try
@@ -137,8 +157,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 return new ErrorDataResult<List<ApartmentListDto>>(new List<ApartmentListDto>(), E.Message, Messages.unknown_err);
             }
         }
-
-       
 
         public IDataResult<ApartmentUpdateDto> Update(ApartmentUpdateDto apartmentUpdateDto)
         {

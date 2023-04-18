@@ -34,6 +34,7 @@ namespace InvertmentSystmen
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "InvertmentSystmen", Version = "v1" });
                 //c.SchemaFilter<RemoveNullablePropertiesFilter>();
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +47,9 @@ namespace InvertmentSystmen
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "InvertmentSystmen v1"));
             }
 
+
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
 
             app.UseRouting();
 

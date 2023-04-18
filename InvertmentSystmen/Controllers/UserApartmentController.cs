@@ -20,39 +20,45 @@ namespace InvoiceManagmentSystem.Controllers
             _userApartmentService = userApartmentService;
         }
 
-        //[HttpPost("adduserapartment")]
-        //public IActionResult Add(UserApartmentAddDto dto)
-        //{
-        //    var result = _userApartmentService.Add(dto);
-        //    return Ok (result);
-        //}
-        //[HttpPost("updateuseapartment")]
-        //public IActionResult Update(UserApartmentUpdateDto dto)
-        //{
-        //    var result = _userApartmentService.Update(dto);
-        //    return Ok(result);
-        //}
+        [HttpPost("adduserapartment")]
+        public IActionResult Add(UserApartmentAddDto dto)
+        {
+            var result = _userApartmentService.Add(dto);
+            return Ok(result);
+        }
+        [HttpPost("updateuseapartment")]
+        public IActionResult Update(UserApartmentUpdateDto dto)
+        {
+            var result = _userApartmentService.Update(dto);
+            return Ok(result);
+        }
 
-        //[HttpGet("userapartmentlist")]
-        //public IActionResult GetList()
-        //{
-        //    var result = _userApartmentService.GetList();
-        //    return Ok(result);
-        //}
+        [HttpGet("userapartmentlist")]
+        public IActionResult GetList()
+        {
+            var result = _userApartmentService.GetList();
+            return Ok(result);
+        }
 
-        //[HttpGet("getbyid")]
-        //public IActionResult GetById(int id)
-        //{
-        //    var result = _userApartmentService.GetById(id);
-        //    return Ok(result);
-        //}
+        [HttpGet("getbyid")]
+        public IActionResult GetById(int id)
+        {
+            var result = _userApartmentService.GetById(id);
+            return Ok(result);
+        }
 
-        //[HttpPost("delete")]
-        //public IActionResult Delete(int id)
-        //{
-        //    var result = _userApartmentService.Delete(id);
-        //    return Ok(result);
-        //}
+        [HttpPost("delete")]
+        public IActionResult Delete(int id)
+        {
+            var result = _userApartmentService.Delete(id);
+            return Ok(result);
+        }
 
+        [HttpPost("addmultiple")]
+        public IActionResult AddMultiple(UserApartmentAddMultipleDto dto)
+        {
+            var result = _userApartmentService.AddMultiple(dto);
+            return Ok(result);
+        }
     }
 }
