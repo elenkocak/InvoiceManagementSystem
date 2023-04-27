@@ -29,13 +29,13 @@ namespace InvoiceManagementSystem.BLL.Concrete
             try
             {
                 var tokenCheckResult = TokenCheck(token);
-                if (!tokenCheckResult.Success)
+                if (!tokenCheckResult.Data.Success)
                 {
                     return new ErrorDataResult<SessionCheckResponseWithUserDto>(new SessionCheckResponseWithUserDto(), tokenCheckResult.Message, tokenCheckResult.MessageCode);
                 }
 
                 var user = _usersDal.Get(x => x.Email == tokenCheckResult.Data.Email);
-                if (user==null)
+                if (user == null)
                 {
                     return new ErrorDataResult<SessionCheckResponseWithUserDto>(new SessionCheckResponseWithUserDto(), "User not found", Messages.user_not_found);
                 }
@@ -43,24 +43,24 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 var session = new SessionCheckResponseWithUserDto
                 {
                     Success = true,
-                    ExpireDate=tokenCheckResult.Data.ExpireDate.Value,
-                    User=user
+                    ExpireDate = tokenCheckResult.Data.ExpireDate.Value,
+                    User = user
                 };
 
                 PermissionCheckDto permissionCheckDto = new()
                 {
                     Token = token,
-                    Permission =permission,
-                    UserId=tokenCheckResult.Data.UserId
+                    Permission = permission,
+                    UserId = tokenCheckResult.Data.UserId
                 };
 
-                var permissionCheckResult=_permissionCheckService.CheckPermission(permissionCheckDto);
+                var permissionCheckResult = _permissionCheckService.CheckPermission(permissionCheckDto);
                 if (!permissionCheckResult.Data)
                 {
                     return new ErrorDataResult<SessionCheckResponseWithUserDto>(new SessionCheckResponseWithUserDto(), permissionCheckResult.Message, permissionCheckResult.MessageCode);
                 }
                 return new SuccessDataResult<SessionCheckResponseWithUserDto>(session, "Ok", Messages.success);
-                
+
             }
             catch (Exception e)
             {
@@ -69,7 +69,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
-     
+
 
         public IDataResult<SessionCheckResponseDto> TokenCheck(string token)
         {
@@ -78,9 +78,9 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 var result = new SessionCheckResponseDto();
                 var sessionCheckList = new UsersSessionCheckDto();
 
-                using (var context= new ImsDbContext())
+                using (var context = new ImsDbContext())
                 {
-                    context.LoadStoredProc("proc_CreateToken")
+                    context.LoadStoredProc("dbo.proc_CheckUserSession")
                         .WithSqlParam("token", token)
                         .ExecuteStoredProc((handler) =>
                         {
@@ -88,7 +88,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                             sessionCheckList = list;
                         });
                 }
-                if (sessionCheckList==null)
+                if (sessionCheckList == null)
                 {
                     return new ErrorDataResult<SessionCheckResponseDto>(new SessionCheckResponseDto(), "Token Not Found", Messages.token_not_found);
                 }
