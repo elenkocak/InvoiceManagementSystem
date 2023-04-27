@@ -2,6 +2,7 @@
 using AutoMapper;
 using InvoiceManagementSystem.BLL.Abstract;
 using InvoiceManagementSystem.BLL.Concrete;
+using InvoiceManagementSystem.Core.Security;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.DAL.Concrete.EntityFramework;
 using System;
@@ -34,7 +35,24 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<EfUserBillDal>().As<IUserBillDal>();
 
             builder.RegisterType<EfBillTypesDal>().As<IBillTypesDal>();
+
+            builder.RegisterType<AuthManager>().As<IAuthService>();
+
+            builder.RegisterType<JwtHelper>().As<ITokenHelper>();
           
+            builder.RegisterType<EfRoleGroupDal>().As<IRoleGroupDal>();
+
+            builder.RegisterType<EfUserSecurityHistoriesDal>().As<IUserSecurityHistoriesDal>();
+
+            builder.RegisterType<EfUserSessionsDal>().As<IUserSessionsDal>();
+
+            builder.RegisterType<EfRoleGroupPermissionsDal>().As<IRoleGroupPermissionsDal>();
+
+            builder.RegisterType<SessionManager>().As<ISessionService>();
+
+            builder.RegisterType<EfUserRoleGroupsDal>().As<IUserRoleGroupDal>();
+
+            builder.RegisterType<EfPermissionsDal>().As<IPermissionsDal>();
         }
     }
 }

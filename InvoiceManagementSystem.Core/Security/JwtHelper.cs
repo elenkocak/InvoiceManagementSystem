@@ -22,11 +22,11 @@ namespace InvoiceManagementSystem.Core.Security
         private DateTime _accessTokenExpiration;
         private IHttpContextAccessor _context;
 
-        public JwtHelper(IConfiguration configuration, TokenOptions tokenOptions, DateTime accessTokenExpiration, IHttpContextAccessor context)
+        public JwtHelper(IConfiguration configuration, IHttpContextAccessor context)
         {
             Configuration = configuration;
-            _tokenOptions = tokenOptions;
-            _accessTokenExpiration = accessTokenExpiration;
+            _tokenOptions = Configuration.GetSection("TokenOptions").Get<TokenOptions>();
+            _accessTokenExpiration = DateTime.UtcNow.AddMinutes(_tokenOptions.AccessTokenExpriation);
             _context = context;
         }
 

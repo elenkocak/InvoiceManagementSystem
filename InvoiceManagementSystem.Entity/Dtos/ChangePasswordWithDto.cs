@@ -13,5 +13,7 @@ namespace InvoiceManagementSystem.Entity.Dtos
         public string CurrentPassword { get; set; }
         public string NewPassword { get; set; }
         public string NewPasswordClone { get; set; }
+        public string SecurityCode { get; set; }
+
     }
 }
