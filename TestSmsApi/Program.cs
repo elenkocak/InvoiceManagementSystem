@@ -1,33 +1,29 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Mail;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace TestSmsApi
 {
     internal class Program
     {
-        static void Main(string[] args)
+        private static void Main()
         {
-            string APIKey = "562fddfb";
-            string APISecret = "AkcfUFgHXInAQoJ7";
-            string toNumber = "+905350619512";
-            string messageText = "Elen Koçak'tan Selamlar";
-
-            string url = string.Format("https://rest.nexmo.com/sms/json?api_key={0}&api_secret={1}&to={2}&from=NEXMO&text={3}", APIKey, APISecret, toNumber, messageText);
-
-            HttpWebRequest request= (HttpWebRequest)WebRequest.Create(url);
-            request.Method = "POST";
-
-            using (HttpWebResponse response=(HttpWebResponse)request.GetResponse())
-            {
-                using (Stream stream=response.GetResponseStream())
-                {
-                    StreamReader reader=new StreamReader(stream, Encoding.UTF8);
-                    Console.WriteLine(reader.ReadToEnd());
-                }
-            }
-            Console.ReadLine();
         }
+
+        //static async Task Execute()
+        //{
+        //    var apiKey = Environment.GetEnvironmentVariable("NAME_OF_THE_ENVIRONMENT_VARIABLE_FOR_YOUR_SENDGRID_KEY");
+        //    var client = new SendGridClient(apiKey);
+        //    var from = new EmailAddress("test@example.com", "Example User");
+        //    var subject = "Sending with SendGrid is Fun";
+        //    var to = new EmailAddress("test@example.com", "Example User");
+        //    var plainTextContent = "and easy to do anywhere, even with C#";
+        //    var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+        //    var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+        //    var response = await client.SendEmailAsync(msg);
+        //}
     }
 }

@@ -61,6 +61,23 @@ Kod bloğunda using anahtar kelimesi kullanılarak, HMACSHA256 sınıfının IDi
             }
         }
 
+   
+        public static bool VerifyPasswordHash(string password, byte[] passwordsalt, byte[] passwordhash)
+        {
+            using (var hmac=new System.Security.Cryptography.HMACSHA512(passwordsalt)) //password salt değerini kullanarak HMACSHA512 nesnesi oluşturulur
+            {
+                var computedHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+                for (int i = 0; i < computedHash.Length; i++)
+                {
+                    if (computedHash[i] != passwordhash[i])
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
         #region Metodun Amacı:
         /*
          * Bu metod, verilen şifrenin doğruluğunu doğrulamak için kullanılır.
@@ -81,20 +98,5 @@ Bu metod, bir şifrenin doğruluğunu doğrularken, hash'lenmiş şifre ve tuz d
          * passwordsalt parametresi, CreatePasswordHash metodundan elde edilen ve parolayı hashlemek için kullanılan tuz değerini içermektedir. Yani CreatePasswordHash metodunda önce bir tuz değeri oluşturulup daha sonra bu tuz değeri, parolayı hashlemek için kullanılan algoritmanın yapısına göre bir şekilde saklanarak passwordsalt parametresine aktarılır. Daha sonra VerifyPasswordHash metodunda, doğru parola ve tuz değeri ile hash değerinin doğruluğu kontrol edilir.
          */
         #endregion
-        public static bool VerifyPasswordHash(string password, byte[] passwordsalt, byte[] passwordhash)
-        {
-            using (var hmac=new System.Security.Cryptography.HMACSHA512(passwordsalt)) //password salt değerini kullanarak HMACSHA512 nesnesi oluşturulur
-            {
-                var computedHash=hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != passwordhash[i])
-                    {
-                        return false;
-                    }
-                }
-            }
-            return true;
-        }
     }
 }

@@ -2,6 +2,7 @@
 using InvoiceManagementSystem.BLL.Constants;
 using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
+using InvoiceManagementSystem.Core.Security;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.DAL.Concrete.EntityFramework;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
@@ -17,10 +18,11 @@ namespace InvoiceManagementSystem.BLL.Concrete
     public class UserManager : IUserService
     {
         private readonly IUserDal _userDal;
-
-        public UserManager(IUserDal userDal)
+        private readonly ITokenHelper _tokenHelper;
+        public UserManager(IUserDal userDal, ITokenHelper tokenHelper)
         {
             _userDal = userDal;
+            _tokenHelper = tokenHelper;
         }
 
         public IDataResult<UserAddMultipleDto> Add(UserAddMultipleDto userAddDto)
@@ -39,7 +41,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                         Surname=item.Surname,
                         PhoneNumber=item.PhoneNumber,
                         Email=item.Email,
-                        HaveaCar=item.HaveaCar,
                         Status=true,
                         TcNo=item.TcNo,
                         RegistrationDate=DateTime.Now,
@@ -115,7 +116,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     Id = result.Id,
                     Email = result.Email,
-                    HaveaCar= result.HaveaCar.Value,
                     Name=result.Name,
                     PhoneNumber=result.PhoneNumber,
                     Status=result.Status.Value,
@@ -144,7 +144,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     {
                         Id = user.Id,
                         Email = user.Email,
-                        HaveaCar = user.HaveaCar.Value,
                         Name = user.Name,
                         PhoneNumber = user.PhoneNumber,
                         Status = user.Status.Value,
@@ -245,10 +244,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     resullt.Id=userUpdateDto.Id;
                 }
-                if (userUpdateDto.HaveaCar != null)
-                {
-                    resullt.HaveaCar = userUpdateDto.HaveaCar;
-                }
+              
                 if (userUpdateDto.Email != null)
                 {
                     resullt.Email = userUpdateDto.Email;

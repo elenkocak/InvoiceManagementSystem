@@ -35,11 +35,30 @@ namespace InvoiceManagementSystem.BLL.Constants
         public static string user_not_found = "err_user_not_found";
         public static string already_phone_number_exists = "err_phone_number_already_exists";
         public static string invalid_phone_number = "err_phone_number_already_exists";
-
+        public static string mails_not_matching = " mails_not_matching";
+        public static string password_cant_contain_name = "password_cant_contain_name";
+        public static string password_cant_contain_surname = "password_cant_contain_surname";
+        public static string user_wrong_code = "user_wrong_code";
+        public static string password_are_not_match = "password_are_not_match";
+        public static string current_password_is_wrong = "current_password_is_wrong";
+        public static string user_control_code_is_null = "user_control_code_is_null";
+        public static string user_control_code_is_wrong = "user_control_code_is_wrong";
+        public static string err_code_expired = "err_code_expired";
+        public static string token_not_found = "token_not_found";
+        public static string token_expired = "token_expired";
         #endregion
 
         #region Token
         public static string generate_token_failed = "err_generate_token_failed";
+
+        #endregion
+
+        #region RoleGroup
+        public static string role_group_not_active = "role_group_not_active";
+        #endregion
+
+        #region Permissions
+        public static string permission_not_found = "permission_not_found";
 
         #endregion
     }
