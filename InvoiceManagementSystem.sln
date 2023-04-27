@@ -16,9 +16,10 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FFF3C810-A9BF-423A-B849-435B4CAEE1DB}"
 	ProjectSection(SolutionItems) = preProject
 		JwtDescription.txt = JwtDescription.txt
+		MyNotes.txt = MyNotes.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestSmsApi", "TestSmsApi\TestSmsApi.csproj", "{CF2547EB-5CA8-45B9-9348-4175E6139049}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestSmsApi", "TestSmsApi\TestSmsApi.csproj", "{CF2547EB-5CA8-45B9-9348-4175E6139049}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

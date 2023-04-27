@@ -23,6 +23,7 @@ using SendGrid.Helpers.Mail;
 using System.Reflection.Metadata.Ecma335;
 using Microsoft.AspNetCore.Mvc;
 using InvoiceManagementSystem.Entity.Concrete;
+using InvoiceManagementSystem.Entity.Enums;
 
 namespace InvoiceManagementSystem.BLL.Concrete
 {
@@ -32,9 +33,13 @@ namespace InvoiceManagementSystem.BLL.Concrete
         private readonly ITokenHelper _tokenHelper;
         private readonly IUserDal _userDal;
         private readonly IRoleGroupDal _roleGroupDal;
+        private readonly IUserRoleGroupService _userRoleGroupService;
+        private readonly ISessionService _sessionService;
+
+
         private IHttpContextAccessor _httpContextAccessor;
         private readonly IUserSecurityHistoriesDal _userSecurityHistoriesDal;
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserDal userDal, IHttpContextAccessor httpContextAccessor, IRoleGroupDal groupDal, IUserSecurityHistoriesDal userSecurityHistoriesDal)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserDal userDal, IHttpContextAccessor httpContextAccessor, IRoleGroupDal groupDal, IUserSecurityHistoriesDal userSecurityHistoriesDal, IUserRoleGroupService userRoleGroupService, ISessionService sessionService)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
@@ -42,12 +47,19 @@ namespace InvoiceManagementSystem.BLL.Concrete
             _httpContextAccessor = httpContextAccessor;
             _roleGroupDal = groupDal;
             _userSecurityHistoriesDal = userSecurityHistoriesDal;
+            _userRoleGroupService = userRoleGroupService;
+            _sessionService = sessionService;
         }
 
         public IDataResult<bool> ChangeUserPassword(ChangePasswordWithDto changePasswordWithDto)
         {
             try
             {
+                var tokenCheck = _sessionService.TokenCheck(changePasswordWithDto.Token);
+                if (tokenCheck == null)
+                {
+                    return new ErrorDataResult<bool>(false, tokenCheck.Message, Messages.token_expired);
+                }
                 var user = _userDal.Get(x => x.SecurityCode.Trim().Replace(" ", "") == changePasswordWithDto.SecurityCode.Trim().Replace(" ", ""));
                 if (user == null)
                 {
@@ -201,8 +213,14 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
         public IDataResult<bool> RegisterForAdmin(UserRegisterAdminstratorDto userRegisterAdminstratorDto)
         {
-            try
-            {
+            //try
+            //{
+                var tokenCheck = _sessionService.CheckAllControls(userRegisterAdminstratorDto.Token, Permission.per_adduser);
+       
+                if(!tokenCheck.Success)
+                {
+                    return new ErrorDataResult<bool>(false, tokenCheck.MessageCode, tokenCheck.Message);
+                }
                 if (!userRegisterAdminstratorDto.Email.Contains("@"))
                 {
                     return new ErrorDataResult<bool>(false, "Lütfen geçerli bir e-posta giriniz", Messages.invalid_email);
@@ -236,8 +254,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 };
                 _userDal.Add(user);
 
-                //var getRoleGroup = _departmentGroupService.Get(x => x.Name == "Initial");
-                //var addDepartman = _userDepartmentGroupService.AddForRegister(new UserRoleGroupAddDto { RoleGroupId = getRoleGroup.Data.Id, UserId = user.UserId });
+
                 SendEmailDto sendEmailDto = new();
                 string replPhoneNumber = "";
                 if (user.PhoneNumber.StartsWith("+90"))
@@ -248,14 +265,15 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
                 SecuritiesResponseDto securitiesResponseDto = GetUserSecurityTypes(user.Id).Data;
 
-                //var getRoleGroup = _roleGroupDal.Get(x => x.Name == "Member");
+                var getRoleGroup = _roleGroupDal.Get(x => x.Name == "Member");
+                var addDepartment = _userRoleGroupService.AddForRegister(new Entity.Dtos.UserRoleGroupDto.UserRoleGroupAddDto { RoleGroupId = getRoleGroup.Id, UserId = user.Id });
                 return new SuccessDataResult<bool>(true, "Kayıt başarıyla oluşturuldu", Messages.success);
-            }
-            catch (Exception e)
-            {
+            //}
+            //catch (Exception e)
+            //{
 
-                return new ErrorDataResult<bool>(false, e.Message, Messages.unknown_err);
-            }
+            //    return new ErrorDataResult<bool>(false, e.Message, Messages.unknown_err);
+            //}
         }
 
         public IDataResult<User> UserExists(UserRegisterAdminstratorDto userRegisterDto)

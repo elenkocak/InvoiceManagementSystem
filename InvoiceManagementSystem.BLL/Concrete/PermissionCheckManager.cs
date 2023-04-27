@@ -27,8 +27,8 @@ namespace InvoiceManagementSystem.BLL.Concrete
 
         public IDataResult<bool> CheckPermission(PermissionCheckDto permissionCheckDto)
         {
-            try
-            {
+            //try
+            //{
                 var userRoleGroup = _userRoleGroupDal.Get(x => x.UserId == permissionCheckDto.UserId);
                 var roleGroup = _roleGroupDal.Get(x => x.Id == userRoleGroup.RoleGroupId);
                 if (roleGroup.Status==false || roleGroup.ExpireDate<DateTime.Now)
@@ -60,12 +60,12 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 }
                 return new ErrorDataResult<bool>(false, "Permission not found", Messages.permission_not_found);
 
-            }
-            catch (Exception e)
-            {
-                return new ErrorDataResult<bool>(false,e.Message, Messages.unknown_err);
+            //}
+            //catch (Exception e)
+            //{
+            //    return new ErrorDataResult<bool>(false,e.Message, Messages.unknown_err);
 
-            }
+            //}
         }
     }
 }

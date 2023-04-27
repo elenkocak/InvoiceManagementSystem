@@ -41,6 +41,8 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
           
             builder.RegisterType<EfRoleGroupDal>().As<IRoleGroupDal>();
+            //builder.RegisterType<RoleGroupManager>().As<IRoleGroupService>();
+
 
             builder.RegisterType<EfUserSecurityHistoriesDal>().As<IUserSecurityHistoriesDal>();
 
@@ -50,9 +52,15 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
 
             builder.RegisterType<SessionManager>().As<ISessionService>();
 
+
             builder.RegisterType<EfUserRoleGroupsDal>().As<IUserRoleGroupDal>();
+            builder.RegisterType<UserRoleGroupManager>().As<IUserRoleGroupService>();
+
+
 
             builder.RegisterType<EfPermissionsDal>().As<IPermissionsDal>();
+
+            builder.RegisterType<PermissionCheckManager>().As<IPermissionCheckService>();
         }
     }
 }

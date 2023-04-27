@@ -17,7 +17,7 @@ namespace InvoiceManagementSystem.BLL.Abstract
     {
         IDataResult<object> Add(AddMultipleApartmentDto addMultipleApartmentDto);
         IDataResult<ApartmentUpdateDto> Update(ApartmentUpdateDto apartmentUpdateDto);
-        IDataResult<bool> Delete(int id);
+        IDataResult<bool> Delete(int id, string token);
         IDataResult<List<ApartmentListDto>> GetList();
         IDataResult<ApartmentListDto> GetById(int id);
         IDataResult<Apartment> Get(Expression<Func<Apartment, bool>> filter);

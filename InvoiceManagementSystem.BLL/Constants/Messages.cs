@@ -61,5 +61,9 @@ namespace InvoiceManagementSystem.BLL.Constants
         public static string permission_not_found = "permission_not_found";
 
         #endregion
+
+        #region UserRoleGroups
+        public static string user_role_group_exist = "user_role_group_exist";
+        #endregion
     }
 }

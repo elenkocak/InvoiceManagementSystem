@@ -26,6 +26,7 @@ namespace InvoiceManagementSystem.DAL.Concrete.Context
         public DbSet<UserSecurityHistory> UserSecurityHistories { get; set; }
         public DbSet<RoleGroupPermissions> RoleGroupsPermissions { get; set; }
         public DbSet<Permissions> Permissions { get; set; }
+        public DbSet<UserRoleGroups> UserRoleGroups { get; set; }
         //public DbSet<UserRole> UserRoles { get; set; }
     }
 }
