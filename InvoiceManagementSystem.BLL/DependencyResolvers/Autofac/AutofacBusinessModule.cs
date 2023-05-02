@@ -61,6 +61,8 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<EfPermissionsDal>().As<IPermissionsDal>();
 
             builder.RegisterType<PermissionCheckManager>().As<IPermissionCheckService>();
+
+            builder.RegisterType<BraingTreeManager>().As<IBraintreeService>();
         }
     }
 }

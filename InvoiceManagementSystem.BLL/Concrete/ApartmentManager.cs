@@ -142,6 +142,11 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
+        public IDataResult<ApartmentListDto> GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
         public IDataResult<List<ApartmentListDto>> GetList()
         {
             try
