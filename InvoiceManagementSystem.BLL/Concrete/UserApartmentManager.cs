@@ -169,6 +169,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     {
                         Id=item.Id,
                         ApartmentId=item.ApartmentId,
+                       
                         BlockName=apartmentDetails.WhichBlock,
                         ApartmentNo=apartmentDetails.ApartmentNo,
                         FloorNumber=apartmentDetails.FloorNumber,

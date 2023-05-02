@@ -28,9 +28,9 @@ namespace InvoiceManagmentSystem.Controllers
         }
 
         [HttpPost("deleteapartment")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, string token)
         {
-            var result = _apartmentService.Delete(id);
+            var result = _apartmentService.Delete(id, token);
             return Ok(result);
         }
 
