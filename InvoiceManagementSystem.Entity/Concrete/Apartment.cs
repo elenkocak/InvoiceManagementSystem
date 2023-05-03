@@ -16,7 +16,7 @@ namespace InvoiceManagementSystem.Entity.Concrete
         public int? FloorNumber { get; set; }
         public string? ApartmentSize { get; set; }
         public bool? Status { get; set; }
-        public int? ApartmentNumber { get; set; }
+        public int? DepartmentNumber { get; set; }
 
     }
 }

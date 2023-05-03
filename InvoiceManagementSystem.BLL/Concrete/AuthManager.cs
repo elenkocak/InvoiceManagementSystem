@@ -367,6 +367,8 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     {
                         return new ErrorDataResult<bool>(false, "Passwords are not matcihg", Messages.password_are_not_match);
                     }
+                    user.SecurityCode = RandomString(10);
+                    _userService.UpdateBasic(user);
                     securitiesResponseDto.SecurityCode = user.SecurityCode;
                     securitiesResponseDto.Email = user.Email;
                 }

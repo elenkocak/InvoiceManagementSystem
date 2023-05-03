@@ -1,4 +1,5 @@
 ﻿using InvoiceManagementSystem.Core.Entities;
+using InvoiceManagementSystem.Core.Pagination;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,8 @@ namespace InvoiceManagementSystem.Core.Repository
         void Delete(T entity);
         void Update(T entity);
         void AddMultiple(List<T> entity);
+
+        //PagingResponseDto<T> GetPagingList(PagingRequestDto pagingRequestDto,
+        //      Expression<Func<T, object>> orderBy = null, Expression<Func<T, object>> thenOrderBy = null, bool isDesc = false, List<string> searchTypes = null, IDictionary<string, string> stringParameters = null, IDictionary<string, int?> intParameters = null, IDictionary<string, bool?> boolParameters = null, IDictionary<string, byte?> byteParameters = null, List<KeyValueDto> dateTimeParameters = null, List<KeyValueParameterDto> parameters = null, string search = null);
     }
 }

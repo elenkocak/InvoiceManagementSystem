@@ -61,5 +61,11 @@ namespace InvoiceManagmentSystem.Controllers
             var result = _billService.UpdateIsBillPaymentStatus(id);
             return Ok(result);
         }
+        [HttpPost("getlistwithpaging")]
+        public IActionResult GetListWithPaging(BillGetlistFilterDto dto)
+        {
+            var result = _billService.GetListWithPaging(dto);
+            return Ok(result);
+        }
     }
 }
