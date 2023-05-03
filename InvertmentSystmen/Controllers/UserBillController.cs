@@ -78,5 +78,12 @@ namespace InvoiceManagmentSystem.Controllers
             var result = _userBillService.Delete(id);
             return Ok(result);
         }
+
+        [HttpPost("payablebill")]
+        public IActionResult PayableBill(string token)
+        {
+            var result = _userBillService.BillsPayable(token);
+            return Ok(result);
+        }
     }
 }

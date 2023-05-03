@@ -4,6 +4,7 @@ using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.Entity.Concrete;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using System;
 
 namespace InvoiceManagmentSystem.Controllers
@@ -13,14 +14,15 @@ namespace InvoiceManagmentSystem.Controllers
     public class PayBillController : ControllerBase
     {
         private readonly IBraintreeService _braintreeService;
-
-        public PayBillController(IBraintreeService braintreeService)
+        private readonly IConfiguration _configuration;
+        public PayBillController(IBraintreeService braintreeService, IConfiguration configuration)
         {
             _braintreeService = braintreeService;
+            _configuration = configuration;
         }
 
         [HttpPost("createbraintoken")]
-        public object PayBill()
+        public object CreateToken()
         {
             var gateway=_braintreeService.GetGateway();
             var clientToken = gateway.ClientToken.Generate();
@@ -28,21 +30,28 @@ namespace InvoiceManagmentSystem.Controllers
 
         }
         [HttpPost("paybill")]
-        public object PayBill(PaymentBillDto dto)
+        public object PayBill()
         {
+            var configuration = new BraintreeGateway
+            {
+                Environment = Braintree.Environment.SANDBOX,
+                MerchantId = _configuration.GetValue<string>("BraintreeGateway:MerchantId"),
+                PublicKey = _configuration.GetValue<string>("BraintreeGateway:PublicKey"),
+                PrivateKey = _configuration.GetValue<string>("BraintreeGateway:PrivateKey")
+
+            };
+
             var request = new TransactionRequest
             {
-                Amount = 10.00M,
-                PaymentMethodNonce = "fake-valid*nonce",
-                Options=new TransactionOptionsRequest
+                Amount = 100M,
+                PaymentMethodNonce = "the_nonce_from_the_client",
+                Options = new TransactionOptionsRequest
                 {
-                    SubmitForSettlement=true
+                    SubmitForSettlement = true,
                 }
-
-               
             };
-            var gateway = _braintreeService.GetGateway();
-            Result<Transaction> result = gateway.Transaction.Sale(request);
+
+            Result<Transaction> result = configuration.Transaction.Sale(request);
             return result;
         }
 

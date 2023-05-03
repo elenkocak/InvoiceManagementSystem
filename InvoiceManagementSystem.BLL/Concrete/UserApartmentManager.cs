@@ -16,12 +16,16 @@ namespace InvoiceManagementSystem.BLL.Concrete
     {
         private readonly IUserApartmentDal _userApartmentDal;
         private readonly IUserService _userService;
+        private readonly IUserDal _userDal;
         private readonly IApartmentService _apartmentService;
-        public UserApartmentManager(IUserApartmentDal userApartmentDal, IUserService userService, IApartmentService apartmentService)
+        private readonly IApartmentDal _apartmentDal;
+        public UserApartmentManager(IUserApartmentDal userApartmentDal, IUserService userService, IApartmentService apartmentService, IUserDal userDal, IApartmentDal apartmentDal)
         {
             _userApartmentDal = userApartmentDal;
             _userService = userService;
             _apartmentService = apartmentService;
+            _userDal = userDal;
+            _apartmentDal = apartmentDal;
         }
 
         public IDataResult<List<UserApartmentListDto>> ActiveUserGetList()
@@ -37,9 +41,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     var apartmentNo = _apartmentService.GetById(userApartment.Id);
                     userApartmentDto.Add(new UserApartmentListDto
                     {
-                        Id = userApartment.Id,
                         UserDetails=userDetails.Data.Name +" "+ userDetails.Data.Surname,
-                        ApartmentId = userApartment.ApartmentId,
                         ApartmentNo = apartmentDetails.Data.ApartmentNo,
                         BlockName = apartmentDetails.Data.WhichBlock,
                         FloorNumber= apartmentDetails.Data.FloorNumber,
@@ -60,6 +62,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
         {
             try
             {
+                var apartment = _apartmentDal.Get(x => x.Id == userApartmentAddDto.ApartmentId);
                 var userApartments = new UserApartment();
                 if (userApartmentAddDto==null)
                 {
@@ -67,6 +70,11 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 }
                 userApartments.ApartmentId = userApartmentAddDto.ApartmentId;
                 userApartments.UserId = userApartmentAddDto.UserId;
+
+
+                _userApartmentDal.Add(userApartments);
+                apartment.Status = false;
+
                 return new SuccessDataResult<bool>(true, "Ok", Messages.success);
             }
             catch (Exception e)
@@ -93,7 +101,10 @@ namespace InvoiceManagementSystem.BLL.Concrete
                         UserId = userApartment.UserId,
                         ApartmentId=userApartment.ApartmentId,                      
                     });
+                    var apartment=_apartmentDal.Get(x=>x.Id==userApartment.ApartmentId);
+                    apartment.ApartmentState = false;
                 }
+
                 var count=dto.UserApartmentAddDtos.Count();
                 return new SuccessDataResult<UserApartmentAddMultipleDto>(dto, $"{count} tane kayıt başarıyla eklendi", Messages.success);
             }
@@ -131,15 +142,13 @@ namespace InvoiceManagementSystem.BLL.Concrete
               
                 if (result==null ||  id==null)
                 {
-                    return new ErrorDataResult<UserApartmentListDto>(null, "fail", Messages.err_null);
+                    return new ErrorDataResult<UserApartmentListDto>(null, "user or apartment not found", Messages.err_null);
                 }
                 var getApartmentDetails = _apartmentService.Get(x => x.Id == result.ApartmentId).Data;
-                var getUserDetails = _userService.Get(x => x.Id == result.UserId).Data;
+                var getUserDetails = _userDal.Get(x => x.Id == result.UserId);
                 var dto=new UserApartmentListDto
                 {
-                    Id = result.Id,
                     FloorNumber=getApartmentDetails.FloorNumber,
-                    ApartmentId=getApartmentDetails.Id,
                     UserDetails=getUserDetails.Name + " "+ getUserDetails.Surname + "  "+ getUserDetails.PhoneNumber,
                     ApartmentNo=getApartmentDetails.ApartmentNo,
                     BlockName=getApartmentDetails.WhichBlock
@@ -167,8 +176,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     var userDetails = _userService.Get(x => x.Id == item.UserId).Data;
                     userApartmentsDto.Add(new UserApartmentListDto
                     {
-                        Id=item.Id,
-                        ApartmentId=item.ApartmentId,
+                   
                        
                         BlockName=apartmentDetails.WhichBlock,
                         ApartmentNo=apartmentDetails.ApartmentNo,
@@ -201,6 +209,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 result.ApartmentId = userApartmentUpdateDto.ApartmentId;
                 result.UserId = userApartmentUpdateDto.UserId;
 
+                _userApartmentDal.Update(result);
                 return new SuccessDataResult<bool>(true, "Ok", Messages.success);
             }
             catch (Exception e)

@@ -27,6 +27,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 PublicKey=_config.GetValue<string>("BraintreeGateway:PublicKey"),
                 PrivateKey=_config.GetValue<string>("BraintreeGateway:PrivateKey")
             };
+            
             return newGateway;
         }
 
