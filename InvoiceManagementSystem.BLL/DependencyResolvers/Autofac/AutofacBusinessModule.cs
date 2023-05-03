@@ -1,7 +1,9 @@
 ﻿using Autofac;
 using AutoMapper;
 using InvoiceManagementSystem.BLL.Abstract;
+using InvoiceManagementSystem.BLL.Abstract.RabitMQ;
 using InvoiceManagementSystem.BLL.Concrete;
+using InvoiceManagementSystem.BLL.Concrete.RabitMQ;
 using InvoiceManagementSystem.Core.Security;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.DAL.Concrete.EntityFramework;
@@ -63,6 +65,8 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<PermissionCheckManager>().As<IPermissionCheckService>();
 
             builder.RegisterType<BraingTreeManager>().As<IBraintreeService>();
+
+            builder.RegisterType<RabitMQProducer>().As<IRabitMQProducer>();
         }
     }
 }

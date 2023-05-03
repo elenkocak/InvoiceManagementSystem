@@ -55,6 +55,7 @@ namespace InvoiceManagmentSystem.Controllers
         public IActionResult Register(UserRegisterAdminstratorDto registerAdminstratorDto)
         {
             var result = _authService.RegisterForAdmin(registerAdminstratorDto);
+
             return Ok(result);
         }
 
