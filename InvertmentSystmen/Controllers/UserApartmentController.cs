@@ -1,4 +1,5 @@
 ﻿using InvoiceManagementSystem.BLL.Abstract;
+using InvoiceManagementSystem.BLL.Abstract.RabitMQ;
 using InvoiceManagementSystem.Entity.Dtos.UserApartmentDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,16 +15,18 @@ namespace InvoiceManagmentSystem.Controllers
     public class UserApartmentController : ControllerBase
     {
         private readonly IUserApartmentService _userApartmentService;
-
-        public UserApartmentController(IUserApartmentService userApartmentService)
+        private readonly IRabitMQProducer _rabitMQProducer;
+        public UserApartmentController(IUserApartmentService userApartmentService, IRabitMQProducer rabitMQProducer)
         {
             _userApartmentService = userApartmentService;
+            _rabitMQProducer = rabitMQProducer;
         }
 
         [HttpPost("adduserapartment")]
         public IActionResult Add(UserApartmentAddDto dto)
         {
             var result = _userApartmentService.Add(dto);
+            _rabitMQProducer.SendProductMessage(result);
             return Ok(result);
         }
         [HttpPost("updateuseapartment")]
@@ -58,6 +61,7 @@ namespace InvoiceManagmentSystem.Controllers
         public IActionResult AddMultiple(UserApartmentAddMultipleDto dto)
         {
             var result = _userApartmentService.AddMultiple(dto);
+            _rabitMQProducer.SendProductMessage(result);
             return Ok(result);
         }
     }
