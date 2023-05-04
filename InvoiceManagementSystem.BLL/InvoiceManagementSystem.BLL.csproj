@@ -22,4 +22,9 @@
     <ProjectReference Include="..\InvoiceManagementSystem.Entity\InvoiceManagementSystem.Entity.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstract\Log\" />
+    <Folder Include="Concrete\Log\" />
+  </ItemGroup>
+
 </Project>
