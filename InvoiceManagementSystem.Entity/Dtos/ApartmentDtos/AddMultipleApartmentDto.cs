@@ -10,5 +10,6 @@ namespace InvoiceManagementSystem.Entity.Dtos.ApartmentDtos
     public class AddMultipleApartmentDto:IDto
     {
         public ApartmentAddDto[] Apartments { get; set; }
+        public string Token { get; set; }
     }
 }

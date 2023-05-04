@@ -10,6 +10,7 @@ namespace InvoiceManagementSystem.Entity.Dtos.BillDtos
     {
         public int Id { get; set; }
         public int? BillTypeId { get; set; }
+        public string BillName { get; set; }
         public decimal? Price { get; set; }
         public DateTime? EndPaymentDate { get; set; }
         public DateTime? CreatedDate { get; set; }

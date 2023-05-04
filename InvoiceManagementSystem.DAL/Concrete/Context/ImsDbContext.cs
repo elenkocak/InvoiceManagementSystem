@@ -17,10 +17,16 @@ namespace InvoiceManagementSystem.DAL.Concrete.Context
         public DbSet<UserApartment> UserApartments { get; set; }
         public DbSet<Bill> Bills { get; set; }
         public DbSet<UserBill> UserBills { get; set; }
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<OperationClaim> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<BillType> BillTypes { get; set; }
+        public DbSet<RoleGroup> RoleGroups { get; set; }
+        public DbSet<UserSession> UserSessions { get; set; }
+        public DbSet<UserSecurityHistory> UserSecurityHistories { get; set; }
+        public DbSet<RoleGroupPermissions> RoleGroupsPermissions { get; set; }
+        public DbSet<Permissions> Permissions { get; set; }
+        public DbSet<UserRoleGroups> UserRoleGroups { get; set; }
         //public DbSet<UserRole> UserRoles { get; set; }
     }
 }

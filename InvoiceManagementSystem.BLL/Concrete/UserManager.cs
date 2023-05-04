@@ -2,6 +2,7 @@
 using InvoiceManagementSystem.BLL.Constants;
 using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
+using InvoiceManagementSystem.Core.Security;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.DAL.Concrete.EntityFramework;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
@@ -17,10 +18,11 @@ namespace InvoiceManagementSystem.BLL.Concrete
     public class UserManager : IUserService
     {
         private readonly IUserDal _userDal;
-
-        public UserManager(IUserDal userDal)
+        private readonly ITokenHelper _tokenHelper;
+        public UserManager(IUserDal userDal, ITokenHelper tokenHelper)
         {
             _userDal = userDal;
+            _tokenHelper = tokenHelper;
         }
 
         public IDataResult<UserAddMultipleDto> Add(UserAddMultipleDto userAddDto)
@@ -39,7 +41,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                         Surname=item.Surname,
                         PhoneNumber=item.PhoneNumber,
                         Email=item.Email,
-                        HaveaCar=item.HaveaCar,
                         Status=true,
                         TcNo=item.TcNo,
                         RegistrationDate=DateTime.Now,
@@ -115,7 +116,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     Id = result.Id,
                     Email = result.Email,
-                    HaveaCar= result.HaveaCar.Value,
                     Name=result.Name,
                     PhoneNumber=result.PhoneNumber,
                     Status=result.Status.Value,
@@ -144,7 +144,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                     {
                         Id = user.Id,
                         Email = user.Email,
-                        HaveaCar = user.HaveaCar.Value,
                         Name = user.Name,
                         PhoneNumber = user.PhoneNumber,
                         Status = user.Status.Value,
@@ -158,6 +157,45 @@ namespace InvoiceManagementSystem.BLL.Concrete
             {
 
                 return new ErrorDataResult<List<UserListDto>>(new List<UserListDto>(), e.Message, Messages.unknown_err);
+            }
+        }
+
+        public IDataResult<User> GetUserByMail(string email)
+        {
+            try
+            {
+                var result = _userDal.Get(x => x.Email == email);
+                if (result != null)
+                {
+                    return new SuccessDataResult<User>(result, "Ok", Messages.success);
+
+                }
+                return new ErrorDataResult<User>(null, "User not found", Messages.user_not_found);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<User>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
+        public IDataResult<User> GetUserByPhone(string phoneNumber)
+        {
+            try
+            {
+                var result = _userDal.Get(x => x.PhoneNumber.Trim().Replace(" ", "") == phoneNumber.Trim().Replace(" ", ""));
+                if (result != null)
+                {
+                    return new SuccessDataResult<User>(result, "Ok", Messages.success);
+                }
+                return new ErrorDataResult<User>(null, "User not found", Messages.user_not_found);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<User>(null, e.Message, Messages.unknown_err);
+
             }
         }
 
@@ -206,10 +244,7 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     resullt.Id=userUpdateDto.Id;
                 }
-                if (userUpdateDto.HaveaCar != null)
-                {
-                    resullt.HaveaCar = userUpdateDto.HaveaCar;
-                }
+              
                 if (userUpdateDto.Email != null)
                 {
                     resullt.Email = userUpdateDto.Email;
@@ -237,6 +272,24 @@ namespace InvoiceManagementSystem.BLL.Concrete
             {
 
                 return new ErrorDataResult<UserUpdateDto>(null, e.Message, Messages.unknown_err);
+            }
+        }
+
+        public IDataResult<bool> UpdateBasic(User user)
+        {
+            try
+            {
+                if (user != null)
+                {
+                    _userDal.Update(user);
+                    return new SuccessDataResult<bool>(true, "Ok", Messages.success);
+                }
+                return new ErrorDataResult<bool>(true, null, Messages.update_operation_fail);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<bool>(false, e.Message, Messages.unknown_err);
             }
         }
     }

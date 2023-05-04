@@ -1,4 +1,5 @@
 ﻿using InvoiceManagementSystem.BLL.Abstract;
+using InvoiceManagementSystem.BLL.Abstract.RabitMQ;
 using InvoiceManagementSystem.Entity.Dtos.UserBillDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,22 +15,25 @@ namespace InvoiceManagmentSystem.Controllers
     public class UserBillController : ControllerBase
     {
         private readonly IUserBillService _userBillService;
-
-        public UserBillController(IUserBillService userBillService)
+        private readonly IRabitMQProducer _rabitMQProducer;
+        public UserBillController(IUserBillService userBillService, IRabitMQProducer rabitMQProducer)
         {
             _userBillService = userBillService;
+            _rabitMQProducer = rabitMQProducer;
         }
 
         [HttpPost("add")]
         public IActionResult Add(UserBillAddDto dto)
         {
             var result = _userBillService.Add(dto);
+            _rabitMQProducer.SendProductMessage(result);
             return Ok(result);
         }
         [HttpPost("addmultiple")]
         public IActionResult AddMultiple(UserBillMultipleAddDto dto)
         {
             var result=_userBillService.AddMultiple(dto);
+            _rabitMQProducer.SendProductMessage(result);
             return Ok(result);
         }
 
@@ -76,6 +80,13 @@ namespace InvoiceManagmentSystem.Controllers
         public IActionResult Delete(int id)
         {
             var result = _userBillService.Delete(id);
+            return Ok(result);
+        }
+
+        [HttpPost("payablebill")]
+        public IActionResult PayableBill(string token)
+        {
+            var result = _userBillService.BillsPayable(token);
             return Ok(result);
         }
     }

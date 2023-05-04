@@ -15,10 +15,14 @@ namespace InvoiceManagementSystem.BLL.Abstract
     {
         IDataResult<UserAddMultipleDto> Add(UserAddMultipleDto userAddDto);
         IDataResult<UserUpdateDto> Update(UserUpdateDto userUpdateDto);
+        IDataResult<bool> UpdateBasic(User user);
         IDataResult<List<UserListDto>> GetList();
         IDataResult<UserListDto> GetById(int id);
         IDataResult<User> Delete(int id);
         IDataResult<User> MakePassiveUser(int id);
         IDataResult<User> Get(Expression<Func<User, bool>> filter);
+
+        IDataResult<User> GetUserByMail(string email);
+        IDataResult<User> GetUserByPhone(string phoneNumber);
     }
 }

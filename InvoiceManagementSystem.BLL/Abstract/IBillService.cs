@@ -22,5 +22,7 @@ namespace InvoiceManagementSystem.BLL.Abstract
         IDataResult<bool>Delete(int id);
         IDataResult<Bill> Get(Expression<Func<Bill, bool>> filter);
 
+        IDataResult<BillListPagingDto> GetListWithPaging(BillGetlistFilterDto billGetlistFilterDto);
+
     }
 }

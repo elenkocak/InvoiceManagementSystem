@@ -1,4 +1,5 @@
 ﻿using InvoiceManagementSystem.Core.Entities;
+using InvoiceManagementSystem.Core.Pagination;
 using InvoiceManagementSystem.Core.Repository;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -66,9 +67,17 @@ namespace InvoiceManagementSystem.Core.EntityFramework
             }
         }
 
+
+
+        //public PagingResponseDto<TEntity> GetPagingList(PagingRequestDto pagingRequestDto, Expression<Func<TEntity, object>> orderBy = null, Expression<Func<TEntity, object>> thenOrderBy = null, bool isDesc = false, List<string> searchTypes = null, IDictionary<string, string> stringParameters = null, IDictionary<string, int?> intParameters = null, IDictionary<string, bool?> boolParameters = null, IDictionary<string, byte?> byteParameters = null, List<KeyValueDto> dateTimeParameters = null, List<KeyValueParameterDto> parameters = null, string search = null)
+        //{
+        //   Type type = typeof(TEntity);
+        //    var types = type.GetProperties();
+        //}
+        
         public void Update(TEntity entity)
         {
-            using (var context=new TContext())
+            using (var context = new TContext())
             {
                 var updatedEntity = context.Entry(entity);
                 updatedEntity.State = EntityState.Modified;

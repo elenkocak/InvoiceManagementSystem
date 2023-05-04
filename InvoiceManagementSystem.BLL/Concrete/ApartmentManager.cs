@@ -1,11 +1,13 @@
 ﻿using InvoiceManagementSystem.BLL.Abstract;
 using InvoiceManagementSystem.BLL.Constants;
+using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.Entity.Concrete;
 using InvoiceManagementSystem.Entity.Dtos;
 using InvoiceManagementSystem.Entity.Dtos.ApartmentDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
+using InvoiceManagementSystem.Entity.Enums;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,16 +21,23 @@ namespace InvoiceManagementSystem.BLL.Concrete
     public class ApartmentManager : IApartmentService
     {
         private readonly IApartmentDal _apartmentDal;
+        private readonly ISessionService _sessionService;
 
-        public ApartmentManager(IApartmentDal apartmentDal)
+        public ApartmentManager(IApartmentDal apartmentDal, ISessionService sessionService)
         {
             _apartmentDal = apartmentDal;
+            _sessionService = sessionService;
         }
 
         public IDataResult<object> Add(AddMultipleApartmentDto addMultipleApartmentDto)
         {
             try
             {
+                var tokenCheck = _sessionService.CheckAllControls(addMultipleApartmentDto.Token, Permission.per_addapartment);
+                if (tokenCheck == null)
+                {
+                    return new ErrorDataResult<object>(null, tokenCheck.Message, tokenCheck.Message);
+                }
                 if (addMultipleApartmentDto==null)
                 {
                     return new ErrorDataResult<object>(null, "Alanlar boş geçilemez", Messages.err_null);
@@ -56,10 +65,16 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
-        public IDataResult<bool> Delete(int id)
+        public IDataResult<bool> Delete(int id, string token)
         {
+            
             try
             {
+                var tokenCheck = _sessionService.CheckAllControls(token, Permission.per_delapartment);
+                if (tokenCheck==null)
+                {
+                    return new ErrorDataResult<bool>(false, tokenCheck.Message, tokenCheck.MessageCode);
+                }
                 if (id!= null)
                 {
                     var result = _apartmentDal.Get(x => x.Id == id);
@@ -77,8 +92,28 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
         }
 
-        public IDataResult<ApartmentListDto> GetById(int id)
+        public IDataResult<Apartment> Get(Expression<Func<Apartment, bool>> filter)
         {
+            try
+            {
+                var getApartment = _apartmentDal.Get(filter);
+                if (getApartment ==null)
+                {
+                    return new ErrorDataResult<Apartment>(null, "apartment not found", Messages.data_not_found);
+                }
+                return new SuccessDataResult<Apartment>(getApartment, "OK", Messages.success);
+            }
+            catch (Exception e)
+            {
+
+                return new ErrorDataResult<Apartment>(null, e.Message, Messages.unknown_err);
+
+            }
+        }
+
+        public IDataResult<ApartmentListDto> GetById(int id, string token)
+        {
+            var tokenCheck = _sessionService.CheckAllControls(token, Permission.per_getbyiduser);
             try
             {
                 var apartment = _apartmentDal.Get(x => x.Id == id);
@@ -105,6 +140,11 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 return new ErrorDataResult<ApartmentListDto>(new ApartmentListDto(), e.Message, Messages.unknown_err);
 
             }
+        }
+
+        public IDataResult<ApartmentListDto> GetById(int id)
+        {
+            throw new NotImplementedException();
         }
 
         public IDataResult<List<ApartmentListDto>> GetList()
@@ -137,8 +177,6 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 return new ErrorDataResult<List<ApartmentListDto>>(new List<ApartmentListDto>(), E.Message, Messages.unknown_err);
             }
         }
-
-       
 
         public IDataResult<ApartmentUpdateDto> Update(ApartmentUpdateDto apartmentUpdateDto)
         {

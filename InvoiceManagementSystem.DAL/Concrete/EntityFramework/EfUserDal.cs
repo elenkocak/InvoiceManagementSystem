@@ -12,7 +12,7 @@ namespace InvoiceManagementSystem.DAL.Concrete.EntityFramework
 {
     public class EfUserDal:EfEntityRepositoryBase<User, ImsDbContext>,IUserDal
     {
-        public List<Role> GetClaims(User users)
+        public List<OperationClaim> GetClaims(User users)
         {
             using (var context=new ImsDbContext())
             {
@@ -20,7 +20,7 @@ namespace InvoiceManagementSystem.DAL.Concrete.EntityFramework
                              join userOperationClaim in context.UserRoles
                              on operationClaim.Id equals userOperationClaim.RoleId
                              where userOperationClaim.UserId == users.Id
-                             select new Role { Id = operationClaim.Id, Name = operationClaim.Name };
+                             select new OperationClaim { Id = operationClaim.Id, Name = operationClaim.Name };
                 return result.ToList();
             }
         }

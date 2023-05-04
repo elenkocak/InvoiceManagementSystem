@@ -1,5 +1,6 @@
 ﻿using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.Entity.Concrete;
+using InvoiceManagementSystem.Entity.Dtos.BillDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserBillDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
 using System;
@@ -23,5 +24,7 @@ namespace InvoiceManagementSystem.BLL.Abstract
         IDataResult<List<UserBillListDto>> GetPassiveBills();
         IDataResult<UserBillListDto> GetById(int id);
         IDataResult<UserBill> Get(Expression<Func<UserBill, bool>> filter);
+        IDataResult<List<UserBillListDto>> BillsPayable(string token);
+
     }
 }

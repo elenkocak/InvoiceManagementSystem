@@ -1,4 +1,5 @@
 ﻿using InvoiceManagementSystem.BLL.Abstract;
+using InvoiceManagementSystem.BLL.Abstract.RabitMQ;
 using InvoiceManagementSystem.Entity.Dtos.BillDtos;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,11 @@ namespace InvoiceManagmentSystem.Controllers
     public class BillController : ControllerBase
     {
         private readonly IBillService _billService;
-
-        public BillController(IBillService billService)
+        private readonly IRabitMQProducer _rabbitMQProducer;
+        public BillController(IBillService billService, IRabitMQProducer rabbitMQProducer)
         {
             _billService = billService;
+            _rabbitMQProducer = rabbitMQProducer;
         }
 
         [HttpGet("getlist")]
@@ -45,6 +47,7 @@ namespace InvoiceManagmentSystem.Controllers
         public IActionResult Add(AddMultipleBillDto dto)
         {
             var result = _billService.Add(dto);
+            _rabbitMQProducer.SendProductMessage(result);
             return Ok(result);
         }
 
@@ -59,6 +62,12 @@ namespace InvoiceManagmentSystem.Controllers
         public IActionResult Delete(int id)
         {
             var result = _billService.UpdateIsBillPaymentStatus(id);
+            return Ok(result);
+        }
+        [HttpPost("getlistwithpaging")]
+        public IActionResult GetListWithPaging(BillGetlistFilterDto dto)
+        {
+            var result = _billService.GetListWithPaging(dto);
             return Ok(result);
         }
     }

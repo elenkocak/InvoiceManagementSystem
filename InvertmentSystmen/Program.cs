@@ -1,6 +1,8 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Castle.Core.Configuration;
 using InvoiceManagementSystem.BLL.DependencyResolvers.Autofac;
+using InvoiceManagementSystem.Core.Security;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -25,7 +27,7 @@ namespace InvertmentSystmen
             .ConfigureContainer<ContainerBuilder>(builder =>
             {
                 builder.RegisterModule(new AutofacBusinessModule());
-               
+
             })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

@@ -4,6 +4,7 @@ using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.DAL.Abstract;
 using InvoiceManagementSystem.Entity.Concrete;
+using InvoiceManagementSystem.Entity.Dtos.BillDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserBillDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
 using Microsoft.AspNetCore.Mvc;
@@ -23,12 +24,16 @@ namespace InvoiceManagementSystem.BLL.Concrete
         private readonly IUserService _userService;
         private readonly IBillService _billService;
         private readonly IBillTypesDal _billTypesDal;
-        public UserBillManager(IUserBillDal userBill, IUserService userService, IBillService billService, IBillTypesDal billTypesDal)
+        private readonly ISessionService _sessionService;
+        private readonly IUserDal _usersDal;
+        public UserBillManager(IUserBillDal userBill, IUserService userService, IBillService billService, IBillTypesDal billTypesDal, ISessionService sessionService, IUserDal usersDal)
         {
             _userBillDal = userBill;
             _userService = userService;
             _billService = billService;
             _billTypesDal = billTypesDal;
+            _sessionService = sessionService;
+            _usersDal = usersDal;
         }
 
         public IDataResult<UserBillAddDto> Add(UserBillAddDto userBillAdd)
@@ -77,6 +82,49 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
             var count = userBillMultipleAdd.UserBillsAddDtos.Count();
             return new SuccessDataResult<UserBillMultipleAddDto>(userBillMultipleAdd, $"{count} tane kayıt başarıyla eklendi", Messages.success);
+        }
+
+        public IDataResult<List<UserBillListDto>> BillsPayable(string token)
+        {
+            try
+            {
+                var tokenCheck = _sessionService.TokenCheck(token);
+                if (tokenCheck==null)
+                {
+                    return new ErrorDataResult<List<UserBillListDto>>(null, "token not found", Messages.token_not_found);
+                }
+
+                var userId = tokenCheck.Data.UserId;
+                var matchUser = _usersDal.Get(x => x.Id == userId).Id;
+
+                var userBill = _userBillDal.Get(x => x.UserId == userId);
+                if (userBill != null && userBill.Status==false)
+                {
+                    var userBillDto = new List<UserBillListDto>();
+                    var userBills = _userBillDal.GetList().Where(x=>x.UserId==matchUser);
+
+                     
+                    foreach (var item in userBills)
+                    {
+                        var billName = _billTypesDal.Get(x => x.Id == item.BillId).BillName;
+                        var userDetails = _usersDal.Get(x => x.Id == item.UserId);
+                        userBillDto.Add(new UserBillListDto
+                        {
+                            Id = item.BillId,
+                            BillName = billName,
+                            Status = item.Status,
+                            UserDetails = userDetails.Name + " " + userDetails.Surname
+                        }); ;
+                    }
+                    return new SuccessDataResult<List<UserBillListDto>>(userBillDto);
+                }
+                return new ErrorDataResult<List<UserBillListDto>>(null, "Bu kişiye ait ödenecek fatura bulunamadı", Messages.data_not_found);
+            }
+            catch (Exception e)
+            {
+
+                throw;
+            }
         }
 
         public IDataResult<UserBill> Delete(int id)
