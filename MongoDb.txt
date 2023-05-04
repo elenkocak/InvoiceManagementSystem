@@ -1,0 +1,88 @@
+.net core web api  ve mongo db ile loglama iþlemi:
+
+
+1-) dtos=>ConnectionDtos=>MongoDbConnectionDto;
+dtos klasöründe ConnectionDtos klasörü açýp, MongoDbConnectionDto classýmý oluþturdum. Amaç: serverconnection, db connection, collection collection'u yazmak
+
+          ****************************************************************************************************************************************
+             public class MongoDbConnectionDto:IDto
+           {
+             public string MongoConnectionString = "mongodb://localhost:27017"; //=>MongoDb'den kopyaladýðým connection string
+             public string LogDb = "InvoiceManagementSystem-db";                //=>MongoDb'de oluþturduðum Database isminin aynýsý
+             public string LogDbCollection = "LogRecords";                      //=>MongoDb'de oluþturduðum collection(table) isminin aynýsý  
+           } 
+            ***************************************************************************************************************************************
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+2-) dal=>context=>MongoDbLoggingTypeContext;
+*Dal katmanýmýn context klasöründe MongoDb baðlantýsýný yapmak için 'MongoDbLoggingTypeContext' classýný oluþturdum.
+
+*Constructorda iþlemlerimi yaptým ki bu classý çaðýrdýðýmda connectionlar gelsin böylece her çaðýrdýðýmda teker teker connectionlarý yazmayacaðým
+
+               ****************************************************************************************************************************************
+                 public class MongoDbLoggingTypeContext
+                 {
+                    public MongoDbLoggingTypeContext()
+                    {
+                     MongoDbConnectionDto connectionDto = new();
+                     MongoUrl mongoUrl = new(connectionDto.MongoConnectionString);
+
+                    var settings=MongoClientSettings.FromUrl(mongoUrl);
+                    var client = new MongoClient(settings);
+                    var database = client.GetDatabase(connectionDto.LogDb);
+                    var collection = database.GetCollection<BsonDocument>(connectionDto.LogDbCollection);
+
+                    Database = database;
+                   Collection = collection;
+               }
+                 public IMongoDatabase Database { get; set; }
+                public IMongoCollection<BsonDocument> Collection { get; set; }
+             }
+            ******************************************************************************************************************************************
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+3-) dtos=> MongoDbLogTypeRecordsDto dto'su oluþturdum. Bu dtoyu mapleyip mongodb'ye basacaðým
+   
+               *********************************************************
+                 public int LogType { get; set; }
+                 public DateTime Date { get; set; }
+                 public string Description { get; set; }
+               *********************************************************
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+4-) InvoicementManagementSystem projemde Bill manager'ýn add metodunda loglama denemesi yaptým.
+    Veritabanýna ekleme iþlemi yapýldýktan hemen sonra ve return iþleminden hemen önce loglama iþlemini gerçekleþtirdim.
+
+              *************************************************************
+                   MongoDbLoggingTypeContext mongoDbLoggingTypeContext=new MongoDbLoggingTypeContext(); //connection for mongo
+
+            MongoDbLogTypeRecordsDto mongoDbLogTypeRecordsDto=new MongoDbLogTypeRecordsDto()
+            {
+                //UserId=user.Id,
+                LogType=(int)LoggingTypeEnum.AddBill,
+                Date=DateTime.Now,
+                Description=$"admin {count} tane fatura ekledi"
+            };
+            var document = new BsonDocument()
+            {
+                //{"UserId", mongoDbLogTypeRecordsDto.UserId },
+                {"Description", mongoDbLogTypeRecordsDto.Description },
+                {"LogType", mongoDbLogTypeRecordsDto.LogType },
+                {"Date", mongoDbLogTypeRecordsDto.Date }
+            };
+            mongoDbLoggingTypeContext.Collection.InsertOne(document); =>mongodbye ekleme metodu=InsertOne()
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+5-) Yukarýdaki LogType'larý enumlarda tutmayý düþünüyorum þimdilik deneme amaçlý sadece addbill için log yaptým
+
+            *******************************************************************************
+               public enum LoggingTypeEnum
+              {
+               AddBill=1,
+              }
+           ********************************************************************************
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

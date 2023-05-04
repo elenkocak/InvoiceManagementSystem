@@ -18,6 +18,7 @@ namespace InvoiceManagementSystem.Entity.Dtos.UserDtos
         public string PhoneNumber { get; set; }
         public bool HaveaCar { get; set; }
         public bool Status { get; set; }
+        public string Token { get; set; }
 
     }
 }

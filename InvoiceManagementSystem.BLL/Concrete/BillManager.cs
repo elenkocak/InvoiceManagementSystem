@@ -3,10 +3,13 @@ using InvoiceManagementSystem.BLL.Abstract;
 using InvoiceManagementSystem.BLL.Constants;
 using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.DAL.Abstract;
+using InvoiceManagementSystem.DAL.Concrete.Context;
 using InvoiceManagementSystem.Entity.Concrete;
+using InvoiceManagementSystem.Entity.Dtos;
 using InvoiceManagementSystem.Entity.Dtos.BillDtos;
 using InvoiceManagementSystem.Entity.Dtos.UserBillDtos;
 using InvoiceManagementSystem.Entity.Enums;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +24,23 @@ namespace InvoiceManagementSystem.BLL.Concrete
         private readonly IBillDal _billDal;
         private readonly ISessionService _sessionService;
         private readonly IBillTypesDal _billTypes;
-        public BillManager(IBillDal billDal, ISessionService sessionService, IBillTypesDal billTypes)
+        private readonly IUserDal _userDal;
+        public BillManager(IBillDal billDal, ISessionService sessionService, IBillTypesDal billTypes, IUserDal userDal)
         {
             _billDal = billDal;
             _sessionService = sessionService;
             _billTypes = billTypes;
+            _userDal = userDal;
         }
 
         public IDataResult<object> Add(AddMultipleBillDto addMultipleBillDto)
         {
-
+            var tokenCheck = _sessionService.TokenCheck(addMultipleBillDto.Token).Data;
+            var user = _userDal.Get(x => x.Id == tokenCheck.UserId);
+            //if (tokenCheck==null)
+            //{
+            //    return new ErrorDataResult<object>(null, "Token Not Found", Messages.token_not_found);
+            //}
 
             foreach (var item in addMultipleBillDto.Bills)
             {
@@ -45,7 +55,23 @@ namespace InvoiceManagementSystem.BLL.Concrete
             }
 
             var count = addMultipleBillDto.Bills.Count();
+            MongoDbLoggingTypeContext mongoDbLoggingTypeContext=new MongoDbLoggingTypeContext(); //connection for mongo
 
+            MongoDbLogTypeRecordsDto mongoDbLogTypeRecordsDto=new MongoDbLogTypeRecordsDto()
+            {
+                //UserId=user.Id,
+                LogType=(int)LoggingTypeEnum.AddBill,
+                Date=DateTime.Now,
+                Description=$"admin {count} tane fatura ekledi"
+            };
+            var document = new BsonDocument()
+            {
+                //{"UserId", mongoDbLogTypeRecordsDto.UserId },
+                {"Description", mongoDbLogTypeRecordsDto.Description },
+                {"LogType", mongoDbLogTypeRecordsDto.LogType },
+                {"Date", mongoDbLogTypeRecordsDto.Date }
+            };
+            mongoDbLoggingTypeContext.Collection.InsertOne(document);
 
             return new SuccessDataResult<object>("Ok", $" {count} tane fatura oluşturuldu", Messages.success);
 

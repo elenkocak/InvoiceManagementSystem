@@ -4,8 +4,12 @@ using InvoiceManagementSystem.Core.Entities.Concrete;
 using InvoiceManagementSystem.Core.Result;
 using InvoiceManagementSystem.Core.Security;
 using InvoiceManagementSystem.DAL.Abstract;
+using InvoiceManagementSystem.DAL.Concrete.Context;
 using InvoiceManagementSystem.DAL.Concrete.EntityFramework;
+using InvoiceManagementSystem.Entity.Dtos;
 using InvoiceManagementSystem.Entity.Dtos.UserDtos;
+using InvoiceManagementSystem.Entity.Enums;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,10 +23,12 @@ namespace InvoiceManagementSystem.BLL.Concrete
     {
         private readonly IUserDal _userDal;
         private readonly ITokenHelper _tokenHelper;
-        public UserManager(IUserDal userDal, ITokenHelper tokenHelper)
+        private ISessionService _sessionService;
+        public UserManager(IUserDal userDal, ITokenHelper tokenHelper, ISessionService sessionService)
         {
             _userDal = userDal;
             _tokenHelper = tokenHelper;
+            _sessionService = sessionService;
         }
 
         public IDataResult<UserAddMultipleDto> Add(UserAddMultipleDto userAddDto)
@@ -46,6 +52,20 @@ namespace InvoiceManagementSystem.BLL.Concrete
                         RegistrationDate=DateTime.Now,
                     });
                 }
+                MongoDbLoggingTypeContext mongoDbLoggingTypeContext = new();
+                MongoDbLogTypeRecordsDto recordsDto = new MongoDbLogTypeRecordsDto()
+                {
+                    LogType = (int)LoggingTypeEnum.AddUser,
+                    Date = DateTime.Now,
+                    Description = "$ admin tarafından kullanıcı kaydı eklendi"
+                };
+                var document = new BsonDocument()
+                {
+                    {"LogType", recordsDto.LogType },
+                    {"Date", recordsDto.Date },
+                    {"Description", recordsDto.Description }
+                };
+                mongoDbLoggingTypeContext.Collection.InsertOne(document);
                 var count = userAddDto.UserAddMultipleDtos.Count();
                 return new SuccessDataResult<UserAddMultipleDto>(userAddDto, $"{count} tane kayıt başarıyla eklendi", Messages.success);
             }
@@ -227,6 +247,12 @@ namespace InvoiceManagementSystem.BLL.Concrete
         {
             try
             {
+                var tokenCheck = _sessionService.TokenCheck(userUpdateDto.Token);
+                var user = _userDal.Get(x => x.Id == tokenCheck.Data.UserId).Id;
+                //if (tokenCheck==null)
+                //{
+                //    return new ErrorDataResult<UserUpdateDto>(null, "Token Not Found", Messages.token_not_found);
+                //}
                 var resullt = _userDal.Get(x => x.Id == userUpdateDto.Id);
                 if (resullt==null)
                 {
@@ -265,7 +291,25 @@ namespace InvoiceManagementSystem.BLL.Concrete
                 {
                     resullt.TcNo = userUpdateDto.TcNo;
                 }
+                var oldinfos = resullt;
+                var test = 1;
+                _userDal.Update(resullt);
+                MongoDbLoggingTypeContext mongoDbLoggingTypeContext = new MongoDbLoggingTypeContext();
+                MongoDbLogTypeRecordsDto mongoDbLogTypeRecordsDto = new()
+                {
+                    LogType = (int)LoggingTypeEnum.UpdateUser,
+                    Date = DateTime.Now,
+                    Description = $"{user} id'li kullanıcı eski isim: {oldinfos.Name} eski soyisim: {oldinfos.Surname} eski telefon numarası: {oldinfos.PhoneNumber}  kaydını; yeni isim  {resullt.Name} yeni soyisim: {resullt.Surname} yeni telefon numarası: {resullt.PhoneNumber} olarak değiştirdi"
+                    
+                };
 
+                var document = new BsonDocument()
+                {
+                    {"LogType", mongoDbLogTypeRecordsDto.LogType },
+                    {"Date", mongoDbLogTypeRecordsDto.Date },
+                    {"Description", mongoDbLogTypeRecordsDto.Description }
+                };
+                mongoDbLoggingTypeContext.Collection.InsertOneAsync(document);
                 return new SuccessDataResult<UserUpdateDto>(userUpdateDto, "Güncelleme işlemi tamamlandı", Messages.success);
             }
             catch (Exception e)
