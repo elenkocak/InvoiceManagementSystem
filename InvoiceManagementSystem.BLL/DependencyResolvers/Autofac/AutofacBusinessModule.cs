@@ -67,6 +67,7 @@ namespace InvoiceManagementSystem.BLL.DependencyResolvers.Autofac
             builder.RegisterType<BraingTreeManager>().As<IBraintreeService>();
 
             builder.RegisterType<RabitMQProducer>().As<IRabitMQProducer>();
+            builder.RegisterType<RoleGroupManager>().As<IRoleGroupService>();
         }
     }
 }

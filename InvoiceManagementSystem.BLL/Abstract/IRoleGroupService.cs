@@ -11,5 +11,6 @@ namespace InvoiceManagementSystem.BLL.Abstract
     public interface IRoleGroupService
     {
         //IDataResult<bool> Add(RoleGroupAddDto roleGroupDto);
+        IDataResult<List<RoleGroupListDto>> GetList(string token);
     }
 }
