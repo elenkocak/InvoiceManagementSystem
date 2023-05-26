@@ -9,7 +9,7 @@ namespace InvoiceManagementSystem.DAL.Concrete.Context
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=coinodb-dev.cjq6i1xxy6zz.eu-central-1.rds.amazonaws.com;Database=InvoiceManagmentSystem;Uid=sa;Password=DtzsCI3HF9n4WIX7O3dj6SSdC43PdpwpMtcaXtDlj8TJy3KDSJ");
+            optionsBuilder.UseSqlServer(@"Server=server-name;Database=db-name;Uid=sa;Password=password");
         }
 
         public DbSet<User> Users { get; set; }
